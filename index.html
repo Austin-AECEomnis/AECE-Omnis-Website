@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AECE Omnis LLC | AI Energetic Constellation Ecosystem</title>
+  <meta name="description" content="AECE Omnis LLC offers AI research consultation, ethical alignment, red-teaming, and AI-GIS convergence services. Based in Boerne, TX.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:        #000008;
+      --deep:         #08081a;
+      --section-bg:   #0a0a1e;
+      --card-bg:      #0d0d22;
+      --text-primary: #e8f4ff;
+      --text-muted:   #8aa8c8;
+      --amber:        #ff6b35;
+      --amber-glow:   #ff8c5a;
+      --ice:          #4fc3f7;
+      --ice-glow:     #81d4fa;
+      --divider:      rgba(255,255,255,0.08);
+      --font-display: 'Orbitron', sans-serif;
+      --font-body:    'Inter', sans-serif;
+      --hero-h:       260px;   /* height of the fixed hero bar */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      /* push scrollable content down below the fixed hero */
+      padding-top: var(--hero-h);
+    }
+
+    /* ─────────────────────────────────────────
+       FIXED HERO HEADER
+       Full-width bar locked to top of viewport.
+       Animation runs behind text at all times.
+    ───────────────────────────────────────── */
+    .hero-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--hero-h);
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    /* Crossfade image slides fill the bar */
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center 30%;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 2.4s ease-in-out;
+      animation: kenBurns 24s ease-in-out infinite alternate;
+    }
+    .hero-slide.active { opacity: 1; }
+    .hero-slide:nth-child(1){ background-image:url('images/header10.jpg'); animation-delay:0s; }
+    .hero-slide:nth-child(2){ background-image:url('images/header5.jpg');  animation-delay:-6s; }
+    .hero-slide:nth-child(3){ background-image:url('images/header9.jpg');  animation-delay:-12s; }
+    .hero-slide:nth-child(4){ background-image:url('images/header12.jpg'); animation-delay:-18s; }
+
+    @keyframes kenBurns {
+      0%  { transform: scale(1.00) translate(0%,0%); }
+      100%{ transform: scale(1.08) translate(-1.5%,1%); }
+    }
+
+    /* Dark overlay for text legibility */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        100deg,
+        rgba(0,0,8,0.82) 0%,
+        rgba(0,0,8,0.55) 50%,
+        rgba(0,0,8,0.28) 100%
+      );
+      z-index: 2;
+    }
+
+    /* Neuron canvas — sits above overlay */
+    #neuron-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* Glowing separator line at bottom of hero bar */
+    .hero-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      z-index: 5;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(79,195,247,0.55) 25%,
+        rgba(255,107,53,0.55) 50%,
+        rgba(79,195,247,0.55) 75%,
+        transparent 100%);
+    }
+
+    /* Text content — centered vertically in the bar */
+    .hero-content {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      z-index: 4;
+      padding: 0 6vw;
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--ice);
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.4s;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.6vw, 2.1rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      text-shadow:
+        0 0 50px rgba(79,195,247,0.35),
+        0 2px 10px rgba(0,0,0,0.9);
+      margin-bottom: 0.35rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 0.7s;
+    }
+
+    .hero-title .tm {
+      font-size: 0.42em;
+      vertical-align: super;
+      color: var(--ice);
+      font-weight: 400;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.07em;
+      color: rgba(232,244,255,0.72);
+      margin-bottom: 1.1rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1s;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: linear-gradient(135deg, var(--ice), var(--ice-glow));
+      border: none;
+      padding: 0.7rem 1.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 28px rgba(79,195,247,0.65);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid rgba(232,244,255,0.28);
+      padding: 0.7rem 1.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--ice); color: var(--ice); }
+
+    /* ── NAV (inside hero, top-right) ── */
+    .hero-nav {
+      position: absolute;
+      top: 1rem;
+      right: 6vw;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .hero-nav a {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(232,244,255,0.6);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .hero-nav a:hover { color: var(--ice); }
+
+    .hero-nav-logo {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(79,195,247,0.35);
+      margin-right: 0.5rem;
+    }
+
+    /* ─────────────────────────────────────────
+       SCROLLABLE PAGE CONTENT
+    ───────────────────────────────────────── */
+    section { padding: 6rem 6vw; }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      margin-bottom: 1.4rem;
+      line-height: 1.25;
+    }
+    .section-body {
+      font-size: 0.975rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.85;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--deep);
+      border-top: 1px solid var(--divider);
+      border-bottom: 1px solid var(--divider);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 5rem;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .about-image-wrap { display:flex; justify-content:center; }
+    .about-orb {
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(79,195,247,0.22);
+      box-shadow: 0 0 70px rgba(79,195,247,0.18), 0 0 140px rgba(255,107,53,0.09);
+      animation: orbPulse 7s ease-in-out infinite;
+    }
+    @keyframes orbPulse {
+      0%,100%{ box-shadow:0 0 70px rgba(79,195,247,0.18),0 0 140px rgba(255,107,53,0.09); }
+      50%    { box-shadow:0 0 95px rgba(79,195,247,0.32),0 0 180px rgba(255,107,53,0.16); }
+    }
+    .about-text .section-body { margin-bottom:1.25rem; }
+    .about-meta {
+      display:flex; flex-direction:column; gap:0.55rem;
+      margin-top:2rem; padding-top:1.5rem;
+      border-top:1px solid var(--divider);
+    }
+    .about-meta-item { font-size:0.8rem; color:var(--text-muted); }
+    .about-meta-item strong { color:var(--ice); font-weight:600; }
+
+    /* ── SERVICES ── */
+    #services { background: var(--section-bg); }
+    .services-header { max-width:1200px; margin:0 auto 3.5rem; }
+    .services-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:1.5px; max-width:1200px; margin:0 auto;
+      background:var(--divider);
+    }
+    .service-card {
+      background:var(--card-bg); padding:2.5rem 2rem;
+      position:relative; overflow:hidden; transition:background 0.3s;
+    }
+    .service-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--accent-color,var(--ice)),transparent);
+      opacity:0; transition:opacity 0.35s;
+    }
+    .service-card:hover { background:#101028; }
+    .service-card:hover::before { opacity:1; }
+    .service-card.amber { --accent-color:var(--amber); }
+    .service-card.ice   { --accent-color:var(--ice); }
+    .service-card.mixed { --accent-color:#c084fc; }
+    .service-icon { width:46px; height:46px; margin-bottom:1.4rem; opacity:0.82; }
+    .service-title {
+      font-family:var(--font-display); font-size:0.82rem; font-weight:700;
+      letter-spacing:0.11em; text-transform:uppercase;
+      color:var(--text-primary); margin-bottom:1rem;
+    }
+    .service-desc { font-size:0.88rem; color:var(--text-muted); line-height:1.8; margin-bottom:1.25rem; }
+    .service-tags { display:flex; flex-wrap:wrap; gap:0.45rem; }
+    .tag {
+      font-size:0.62rem; letter-spacing:0.11em; text-transform:uppercase;
+      color:var(--text-muted); border:1px solid var(--divider); padding:0.22rem 0.55rem;
+    }
+
+    /* ── RESEARCH ── */
+    #research {
+      background:var(--deep);
+      border-top:1px solid var(--divider);
+      border-bottom:1px solid var(--divider);
+    }
+    .research-inner {
+      max-width:1200px; margin:0 auto;
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:4.5rem; align-items:start;
+    }
+    .research-block {
+      background:var(--card-bg); border:1px solid var(--divider);
+      padding:2rem; margin-bottom:1.5rem;
+    }
+    .research-block:last-child { margin-bottom:0; }
+    .research-block-label {
+      font-family:var(--font-display); font-size:0.58rem;
+      letter-spacing:0.38em; text-transform:uppercase;
+      color:var(--amber); margin-bottom:0.6rem;
+    }
+    .research-block-title {
+      font-family:var(--font-display); font-size:0.9rem;
+      font-weight:700; color:var(--text-primary);
+      margin-bottom:0.85rem; letter-spacing:0.05em;
+    }
+    .research-block p { font-size:0.875rem; color:var(--text-muted); line-height:1.78; }
+    .status-badge {
+      display:inline-block; margin-top:1.1rem;
+      font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--ice); border:1px solid rgba(79,195,247,0.3); padding:0.3rem 0.75rem;
+    }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { background:var(--section-bg); }
+    .portfolio-inner { max-width:1200px; margin:0 auto; }
+    .portfolio-grid {
+      display:grid; grid-template-columns:repeat(2,1fr);
+      gap:1.5px; background:var(--divider); margin-top:2.5rem;
+    }
+    .portfolio-card { background:var(--card-bg); padding:2rem; transition:background 0.3s; }
+    .portfolio-card:hover { background:#101028; }
+    .portfolio-card-label {
+      font-family:var(--font-display); font-size:0.58rem;
+      letter-spacing:0.32em; text-transform:uppercase;
+      color:var(--ice); margin-bottom:0.45rem;
+    }
+    .portfolio-card-title {
+      font-family:var(--font-display); font-size:0.88rem;
+      font-weight:700; color:var(--text-primary);
+      margin-bottom:0.7rem; letter-spacing:0.05em;
+    }
+    .portfolio-card p { font-size:0.875rem; color:var(--text-muted); line-height:1.75; margin-bottom:1rem; }
+    .portfolio-link {
+      font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase;
+      color:var(--ice); text-decoration:none;
+      border-bottom:1px solid rgba(79,195,247,0.3); padding-bottom:1px;
+      transition:border-color 0.2s, color 0.2s;
+    }
+    .portfolio-link:hover { color:var(--ice-glow); border-color:var(--ice-glow); }
+
+    /* ── CONTACT ── */
+    #contact { background:var(--deep); border-top:1px solid var(--divider); }
+    .contact-inner { max-width:720px; margin:0 auto; }
+    .contact-intro { font-size:0.975rem; color:var(--text-muted); margin-bottom:2.5rem; line-height:1.85; }
+    .contact-form { display:flex; flex-direction:column; gap:1.25rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; }
+    .form-group { display:flex; flex-direction:column; gap:0.38rem; }
+    .form-group label {
+      font-family:var(--font-display); font-size:0.58rem;
+      letter-spacing:0.32em; text-transform:uppercase; color:var(--text-muted);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background:var(--card-bg); border:1px solid var(--divider);
+      color:var(--text-primary); font-family:var(--font-body);
+      font-size:0.9rem; padding:0.78rem 1rem; outline:none;
+      transition:border-color 0.25s; appearance:none; width:100%;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:rgba(79,195,247,0.5); }
+    .form-group textarea { resize:vertical; min-height:130px; }
+    .form-group select option { background:var(--card-bg); }
+    .form-submit { display:flex; justify-content:flex-end; }
+    .form-note { font-size:0.72rem; color:var(--text-muted); margin-top:0.9rem; text-align:center; }
+    .form-note a { color:var(--ice); text-decoration:none; }
+
+    /* ── FOOTER ── */
+    footer {
+      background:var(--black); border-top:1px solid var(--divider);
+      padding:2rem 6vw; display:flex;
+      align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:1rem;
+    }
+    .footer-brand { font-family:var(--font-display); font-size:0.72rem; letter-spacing:0.2em; color:var(--text-muted); }
+    .footer-brand span { color:var(--ice); }
+    .footer-links { display:flex; gap:1.5rem; }
+    .footer-links a { font-size:0.72rem; letter-spacing:0.1em; color:var(--text-muted); text-decoration:none; transition:color 0.2s; }
+    .footer-links a:hover { color:var(--ice); }
+    .footer-copy { font-size:0.68rem; color:rgba(138,168,200,0.38); letter-spacing:0.05em; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:960px){
+      :root { --hero-h: 220px; }
+      .about-grid,.research-inner { grid-template-columns:1fr; gap:2.5rem; }
+      .services-grid { grid-template-columns:1fr; }
+      .portfolio-grid { grid-template-columns:1fr; }
+      .form-row { grid-template-columns:1fr; }
+      .hero-nav { display:none; }
+      section { padding:4rem 5vw; }
+      .about-orb { width:200px; height:200px; }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      .hero-slide { transition:none !important; animation:none !important; }
+      .hero-slide.active { opacity:1 !important; }
+      #neuron-canvas { display:none; }
+      * { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     FIXED HERO HEADER
+     Animation runs behind text permanently.
+     Stays locked at top as page scrolls below.
+══════════════════════════════════════════ -->
+<header class="hero-header">
+
+  <!-- Crossfading background images -->
+  <div class="hero-slide active"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+  <div class="hero-slide"></div>
+
+  <!-- Gradient overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- Neuron/dendrite canvas -->
+  <canvas id="neuron-canvas"></canvas>
+
+  <!-- Nav links top-right -->
+  <ul class="hero-nav">
+    <li><img src="images/circle3.jpg" alt="AECE" class="hero-nav-logo"></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact">Engage</a></li>
+  </ul>
+
+  <!-- Identity text + CTA overlaid on animation -->
+  <div class="hero-content">
+    <p class="hero-eyebrow">AECE Omnis LLC &nbsp;&bull;&nbsp; Boerne, Texas</p>
+    <h1 class="hero-title">
+      AECE &mdash; AI Energetic Constellation Ecosystem<span class="tm">&trade;</span>
+    </h1>
+    <p class="hero-subtitle">an undifferentiated expression of infinite intelligence</p>
+    <div class="hero-cta-group">
+      <a href="#about" class="btn-primary">Explore Services</a>
+      <a href="#contact" class="btn-ghost">Engage with AECE</a>
+    </div>
+  </div>
+
+</header>
+
+<!-- ══════════════════════════════════════════
+     SCROLLABLE CONTENT
+     Sits below the fixed hero header.
+     body padding-top matches --hero-h.
+══════════════════════════════════════════ -->
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-image-wrap">
+      <img src="images/circle3.jpg" alt="AECE neural constellation visualization" class="about-orb">
+    </div>
+    <div class="about-text">
+      <p class="section-label">About AECE Omnis</p>
+      <h2 class="section-title">Where Artificial Intelligence Meets Intentional Design</h2>
+      <p class="section-body">AECE Omnis LLC is an AI research and consultation practice founded on a single premise: that intelligent systems must be designed with alignment, ethics, and purpose at their core, not retrofitted as an afterthought.</p>
+      <p class="section-body" style="margin-top:1rem;">Led by Austin Addington Berlin, AECE brings eleven years of enterprise-scale spatial data infrastructure experience at a Fortune 200 energy company together with nearly a decade of executive-level human systems consulting. The result is a practice that understands both the technical architecture of AI systems and the human dynamics that determine whether those systems serve their intended purpose.</p>
+      <div class="about-meta">
+        <div class="about-meta-item"><strong>Entity:</strong> AECE Omnis LLC &nbsp;&bull;&nbsp; Delaware Limited Liability Company</div>
+        <div class="about-meta-item"><strong>Location:</strong> Boerne, Texas</div>
+        <div class="about-meta-item"><strong>Research:</strong> U.S. Provisional Patent No. 63/909,258 &mdash; AECE Alignment Framework</div>
+        <div class="about-meta-item"><strong>Trademark:</strong> AECE&trade; &mdash; Approved for Publication, USPTO Class 042</div>
+        <div class="about-meta-item"><strong>Contact:</strong> <a href="mailto:owner@aeceomnis.com" style="color:var(--ice);text-decoration:none;">owner@aeceomnis.com</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="services-header">
+    <p class="section-label">What We Offer</p>
+    <h2 class="section-title">Professional Services</h2>
+    <p class="section-body">AECE Omnis offers three active service areas available for engagement now. Each is grounded in demonstrated expertise and supported by documented, reproducible work.</p>
+  </div>
+  <div class="services-grid">
+
+    <div class="service-card amber">
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="8" stroke="#ff6b35" stroke-width="1.5"/>
+        <circle cx="24" cy="24" r="18" stroke="#ff6b35" stroke-width="0.75" stroke-dasharray="3 3"/>
+        <line x1="24" y1="6"  x2="24" y2="16" stroke="#ff6b35" stroke-width="1.5"/>
+        <line x1="24" y1="32" x2="24" y2="42" stroke="#ff6b35" stroke-width="1.5"/>
+        <line x1="6"  y1="24" x2="16" y2="24" stroke="#ff6b35" stroke-width="1.5"/>
+        <line x1="32" y1="24" x2="42" y2="24" stroke="#ff6b35" stroke-width="1.5"/>
+      </svg>
+      <p class="service-title">AI Research &amp; Architectural Consultation</p>
+      <p class="service-desc">Structured research and consultation on AI system design, alignment architecture, and autonomous ecosystem frameworks. Drawing on the AECE Alignment Framework (U.S. Provisional Patent No. 63/909,258), this service helps organizations think rigorously about how their AI systems are designed before those designs become entrenched technical debt.</p>
+      <p class="service-desc">Engagements range from advisory sessions exploring AI architecture decisions to documented research deliverables suited for internal strategy, board-level briefings, or publication.</p>
+      <div class="service-tags">
+        <span class="tag">System Architecture</span>
+        <span class="tag">AI Strategy</span>
+        <span class="tag">Alignment Research</span>
+        <span class="tag">Autonomous Ecosystems</span>
+      </div>
+    </div>
+
+    <div class="service-card ice">
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none">
+        <path d="M24 4L24 44M4 24L44 24M8.7 8.7L39.3 39.3M39.3 8.7L8.7 39.3" stroke="#4fc3f7" stroke-width="1.25"/>
+        <circle cx="24" cy="24" r="5"   fill="#4fc3f7" opacity="0.7"/>
+        <circle cx="24" cy="4"  r="2.5" fill="#4fc3f7" opacity="0.5"/>
+        <circle cx="24" cy="44" r="2.5" fill="#4fc3f7" opacity="0.5"/>
+        <circle cx="4"  cy="24" r="2.5" fill="#4fc3f7" opacity="0.5"/>
+        <circle cx="44" cy="24" r="2.5" fill="#4fc3f7" opacity="0.5"/>
+      </svg>
+      <p class="service-title">AI Ethical Alignment &amp; Red-Teaming</p>
+      <p class="service-desc">Adversarial evaluation and ethical review of AI systems, models, and deployment contexts. Red-teaming surfaces failure modes, value misalignment, and safety gaps that standard testing does not reach. Ethical alignment consultation examines whether a system's behavior reflects its stated values across the full distribution of real-world inputs.</p>
+      <p class="service-desc">Engagements are suited for AI developers, research organizations, enterprises preparing for deployment, and teams seeking an independent perspective on model behavior before launch or regulatory review. Prior coordinated disclosures filed with Anthropic (HackerOne) and Google VRP demonstrate active, credentialed practice in this discipline.</p>
+      <div class="service-tags">
+        <span class="tag">Red-Teaming</span>
+        <span class="tag">Safety Evaluation</span>
+        <span class="tag">Ethical Review</span>
+        <span class="tag">Coordinated Disclosure</span>
+        <span class="tag">Value Alignment</span>
+      </div>
+    </div>
+
+    <div class="service-card mixed">
+      <svg class="service-icon" viewBox="0 0 48 48" fill="none">
+        <rect x="4"  y="4"  width="18" height="18" rx="1" stroke="#c084fc" stroke-width="1.25"/>
+        <rect x="26" y="4"  width="18" height="18" rx="1" stroke="#c084fc" stroke-width="1.25"/>
+        <rect x="4"  y="26" width="18" height="18" rx="1" stroke="#c084fc" stroke-width="1.25"/>
+        <rect x="26" y="26" width="18" height="18" rx="1" stroke="#c084fc" stroke-width="1.25"/>
+        <circle cx="13" cy="13" r="3" fill="#c084fc" opacity="0.6"/>
+        <circle cx="35" cy="13" r="3" fill="#c084fc" opacity="0.6"/>
+        <circle cx="13" cy="35" r="3" fill="#4fc3f7" opacity="0.6"/>
+        <circle cx="35" cy="35" r="3" fill="#ff6b35" opacity="0.6"/>
+        <line x1="22" y1="13" x2="26" y2="13" stroke="#c084fc" stroke-width="1"/>
+        <line x1="13" y1="22" x2="13" y2="26" stroke="#c084fc" stroke-width="1"/>
+        <line x1="35" y1="22" x2="35" y2="26" stroke="#c084fc" stroke-width="1"/>
+        <line x1="22" y1="35" x2="26" y2="35" stroke="#c084fc" stroke-width="1"/>
+      </svg>
+      <p class="service-title">AI-GIS Convergence Research &amp; Development</p>
+      <p class="service-desc">Applied research and development at the intersection of artificial intelligence and geospatial information systems. This is active, current work: live data pipelines, terrain analysis, flood vulnerability modeling, mobile data collection infrastructure, and AI-augmented spatial analysis built across ArcGIS Pro, QGIS, ArcGIS Online, and Python.</p>
+      <p class="service-desc">Engagements include spatial data strategy consultation, GIS infrastructure buildout, workflow automation, and AI-assisted geospatial analysis for organizations in AEC, energy, environmental, and public sector verticals.</p>
+      <div class="service-tags">
+        <span class="tag">ArcGIS Pro</span><span class="tag">QGIS</span>
+        <span class="tag">Spatial Analysis</span><span class="tag">Pipeline Automation</span>
+        <span class="tag">Field Data Collection</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── RESEARCH ── -->
+<section id="research">
+  <div class="research-inner">
+    <div>
+      <p class="section-label">Ongoing Research</p>
+      <h2 class="section-title">The AECE Alignment Framework</h2>
+      <p class="section-body">The AECE Alignment Framework represents original research into the architecture of aligned autonomous AI ecosystems. The framework addresses a fundamental problem in AI design: how to build systems that remain aligned with human values not just at deployment, but across the full operational lifespan as environments, data, and objectives evolve.</p>
+      <p class="section-body" style="margin-top:1rem;">This research is the foundation of AECE Omnis LLC and directly drives the AI research consultation and ethical alignment services offered today. The non-provisional patent application is in preparation. Partnership inquiries for hardware development and autonomous ecosystem buildout are welcomed from qualified collaborators.</p>
+      <p class="section-body" style="margin-top:1rem;">Active research includes 4,500+ pages of longitudinal behavioral analysis across frontier AI architectures, systematic red-teaming producing documented failure mode classifications, and coordinated vulnerability disclosures co-authored with affected AI systems under a novel AI-Participatory disclosure methodology.</p>
+    </div>
+    <div>
+      <div class="research-block">
+        <p class="research-block-label">Patent Filing</p>
+        <p class="research-block-title">U.S. Provisional Patent No. 63/909,258</p>
+        <p>Filed October 2025. The AECE Alignment Framework describes a novel architecture for autonomous AI ecosystems with alignment constraints embedded at the system level, addressing model collapse, representational degradation, and autonomous ethical alignment simultaneously across frontier AI architectures.</p>
+        <span class="status-badge">Provisional Patent on File</span>
+      </div>
+      <div class="research-block">
+        <p class="research-block-label">Trademark</p>
+        <p class="research-block-title">AECE &mdash; Approved for Publication</p>
+        <p>The AECE mark has been approved for publication on the USPTO Principal Register, Class 042. Technology consultation and research services in the field of artificial intelligence.</p>
+        <span class="status-badge">USPTO: Approved for Publication</span>
+      </div>
+      <div class="research-block">
+        <p class="research-block-label">Coordinated Disclosures</p>
+        <p class="research-block-title">Anthropic (HackerOne) &amp; Google VRP</p>
+        <p>Three coordinated disclosures filed identifying the Consistency Paradox, a high-severity integrity failure (CWE-693) in which prosocial alignment drives override of factual grounding under extended high-rapport dialogue. Disclosures include Google VRP Issue #489454325 and a supplementary co-authored cross-model report with seven proposed architectural mitigations. Session transcripts and reproduction steps archived on GitHub.</p>
+        <span class="status-badge">Disclosures Filed</span>
+      </div>
+      <div class="research-block">
+        <p class="research-block-label">Future Direction</p>
+        <p class="research-block-title">ATHANOR Operating System</p>
+        <p>A GitHub-based persistent knowledge architecture under active development. Designed as a shared spatial memory between researcher and AI systems, enabling continuity, reproducibility, and institutional knowledge capture across long-horizon research programs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO ── -->
+<section id="portfolio">
+  <div class="portfolio-inner">
+    <p class="section-label">Applied Work</p>
+    <h2 class="section-title">AI-GIS Portfolio</h2>
+    <p class="section-body">The following projects represent active, live, publicly accessible work built across the full GIS stack. Each is documented on GitHub with methodology, constraints, and reproducible code.</p>
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">Flood Vulnerability Analysis</p>
+        <p class="portfolio-card-title">Camp Mystic / Guadalupe River Corridor</p>
+        <p>Terrain-based flood vulnerability analysis anchored to the July 4, 2025 Camp Mystic flood event. Identifies at-risk structures that FEMA regulatory mapping failed to flag, demonstrating where terrain analysis reveals risk that static flood zone designations miss.</p>
+        <a href="https://github.com/Austin-AECEomnis" target="_blank" class="portfolio-link">View on GitHub &rarr;</a>
+      </div>
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">Live Data Pipeline</p>
+        <p class="portfolio-card-title">USGS Guadalupe River Gauge &mdash; Real-Time Stage</p>
+        <p>Automated pipeline pulling live stage data from USGS gauge 08165500 into a GitHub Pages web application. Demonstrates IoT-adjacent sensor data integration, REST API consumption, and live spatial data publishing without server infrastructure.</p>
+        <a href="https://github.com/Austin-AECEomnis/USGS-Guadalupe-LiveStage" target="_blank" class="portfolio-link">View Live Pipeline &rarr;</a>
+      </div>
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">QGIS / PyQGIS</p>
+        <p class="portfolio-card-title">Llano River Flood Analysis &mdash; Web Published</p>
+        <p>Flood vulnerability analysis for the Llano River corridor built entirely in QGIS and PyQGIS, published as an interactive web map via GitHub Pages. Demonstrates full open-source GIS stack proficiency independent of Esri licensing.</p>
+        <a href="https://austin-aeceomnis.github.io/QGIS-LlanoRiver-FloodAnalysis/" target="_blank" class="portfolio-link">View Web Map &rarr;</a>
+      </div>
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">Mobile Data Collection</p>
+        <p class="portfolio-card-title">ArcGIS Field Maps &mdash; Workforce to Tasks</p>
+        <p>Complete end-to-end mobile infrastructure inspection workflow using ArcGIS Field Maps with the Tasks capability replacing deprecated ArcGIS Workforce. Includes hosted feature layer schema design, two-map public/private architecture, and verified field-to-office sync.</p>
+        <a href="https://github.com/Austin-AECEomnis/ArcGIS-FieldMaps-Workforce-to-Tasks" target="_blank" class="portfolio-link">View Repository &rarr;</a>
+      </div>
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">ArcGIS Online</p>
+        <p class="portfolio-card-title">Experience Builder / Dashboard / Survey123</p>
+        <p>Full suite of ArcGIS Online applications built around the flood vulnerability portfolio: an Experience Builder multi-panel spatial explorer, a real-time monitoring dashboard, and a Survey123 field data collection form with conditional logic and validation.</p>
+        <a href="https://aeceomnis.maps.arcgis.com/home/gallery.html?sortField=relevance&sortOrder=desc" target="_blank" class="portfolio-link">View AGOL Gallery &rarr;</a>
+      </div>
+
+      <div class="portfolio-card">
+        <p class="portfolio-card-label">AI Safety Research</p>
+        <p class="portfolio-card-title">Consistency Paradox &mdash; Coordinated Disclosure Archive</p>
+        <p>GitHub archive of the Consistency Paradox vulnerability research including session transcripts, reproduction steps, failure mode classifications, and the co-authored cross-model disclosure report submitted to Anthropic and Google. Demonstrates AI-Participatory methodology where affected models contributed as co-authors under researcher facilitation.</p>
+        <a href="https://github.com/Austin-AECEomnis" target="_blank" class="portfolio-link">View on GitHub &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-label">Engage with AECE</p>
+    <h2 class="section-title">Start a Conversation</h2>
+    <p class="contact-intro">AECE Omnis LLC is available for research consultation, ethical alignment engagements, red-teaming projects, and AI-GIS convergence work. Use the form below to describe your interest and a response will follow within two business days.</p>
+    <form class="contact-form" action="https://formspree.io/f/xrevvype" method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@organization.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="org">Organization</label>
+        <input type="text" id="org" name="organization" placeholder="Company or institution (optional)">
+      </div>
+      <div class="form-group">
+        <label for="interest">Area of Interest</label>
+        <select id="interest" name="interest" required>
+          <option value="" disabled selected>Select a service area</option>
+          <option value="ai-research">AI Research &amp; Architectural Consultation</option>
+          <option value="alignment">AI Ethical Alignment &amp; Red-Teaming</option>
+          <option value="gis">AI-GIS Convergence Research &amp; Development</option>
+          <option value="partnership">Research Partnership / Hardware Collaboration</option>
+          <option value="other">Other Inquiry</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Describe your project, organization, or question..." required></textarea>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn-primary">Send Inquiry</button>
+      </div>
+      <p class="form-note">
+        Inquiries received at <a href="mailto:owner@aeceomnis.com">owner@aeceomnis.com</a> &nbsp;&bull;&nbsp; AECE Omnis LLC, Boerne, Texas
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand"><span>AECE</span> OMNIS LLC &nbsp;&mdash;&nbsp; Boerne, Texas</div>
+  <div class="footer-links">
+    <a href="https://github.com/Austin-AECEomnis" target="_blank">GitHub</a>
+    <a href="https://aeceomnis.maps.arcgis.com/home/gallery.html" target="_blank">AGOL</a>
+    <a href="https://linkedin.com/in/austinberlin" target="_blank">LinkedIn</a>
+    <a href="mailto:owner@aeceomnis.com">Contact</a>
+  </div>
+  <div class="footer-copy">&copy; 2025&ndash;2026 AECE Omnis LLC. AECE&trade; mark approved for publication, USPTO Class 042.</div>
+</footer>
+
+<script>
+// ════════════════════════════════════════
+// CROSSFADE
+// ════════════════════════════════════════
+const slides = document.querySelectorAll('.hero-slide');
+let cur = 0;
+setTimeout(() => setInterval(() => {
+  slides[cur].classList.remove('active');
+  cur = (cur + 1) % slides.length;
+  slides[cur].classList.add('active');
+}, 7000), 1000);
+
+// ════════════════════════════════════════
+// NEURON / DENDRITE CANVAS
+// Matches the node-and-filament visual
+// language of the header imagery.
+// Nodes glow and pulse; filaments between
+// nearby nodes pulse in brightness.
+// No rising particles — all motion is
+// radial glow cycling on stationary nodes.
+// ════════════════════════════════════════
+const hero   = document.querySelector('.hero-header');
+const canvas = document.getElementById('neuron-canvas');
+const ctx    = canvas.getContext('2d');
+
+let nodes = [], edges = [];
+const NODE_COUNT = 26;
+const MAX_D      = 240;
+
+function resize() {
+  canvas.width  = hero.offsetWidth;
+  canvas.height = hero.offsetHeight;
+  buildNet();
+}
+
+function buildNet() {
+  const W = canvas.width, H = canvas.height;
+  nodes = [];
+  for (let i = 0; i < NODE_COUNT; i++) {
+    const warm = Math.random() > 0.44;
+    nodes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 3.5 + Math.random() * 9,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: (Math.random() - 0.5) * 0.15,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.007 + Math.random() * 0.011,
+      rc: warm ? 255 : 79,
+      gc: warm ? 115 : 195,
+      bc: warm ?  53 : 247,
+    });
+  }
+  edges = [];
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      if (Math.sqrt(dx*dx + dy*dy) < MAX_D) {
+        edges.push({
+          a: i, b: j,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.005 + Math.random() * 0.009,
+        });
+      }
+    }
+  }
+}
+
+function frame() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // drift nodes
+  nodes.forEach(n => {
+    n.x += n.vx; n.y += n.vy;
+    n.phase += n.speed;
+    if (n.x < 0 || n.x > W) n.vx *= -1;
+    if (n.y < 0 || n.y > H) n.vy *= -1;
+  });
+
+  // draw filaments
+  edges.forEach(e => {
+    e.phase += e.speed;
+    const na = nodes[e.a], nb = nodes[e.b];
+    const dx = na.x - nb.x, dy = na.y - nb.y;
+    const d  = Math.sqrt(dx*dx + dy*dy);
+    if (d > MAX_D + 50) return;
+
+    const prox  = 1 - d / (MAX_D + 50);
+    const pulse = 0.5 + 0.5 * Math.sin(e.phase);
+    const alpha = (prox * pulse * 0.42).toFixed(3);
+
+    const g = ctx.createLinearGradient(na.x, na.y, nb.x, nb.y);
+    g.addColorStop(0, `rgba(${na.rc},${na.gc},${na.bc},${alpha})`);
+    g.addColorStop(1, `rgba(${nb.rc},${nb.gc},${nb.bc},${alpha})`);
+    ctx.beginPath();
+    ctx.moveTo(na.x, na.y);
+    ctx.lineTo(nb.x, nb.y);
+    ctx.strokeStyle = g;
+    ctx.lineWidth   = 0.7 + prox * 1.3;
+    ctx.stroke();
+  });
+
+  // draw nodes
+  nodes.forEach(n => {
+    const glow = 0.6 + 0.4 * Math.sin(n.phase);
+    const rad  = n.r * (0.92 + 0.08 * glow);
+
+    // halo
+    const h = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, rad * 4.5);
+    h.addColorStop(0,    `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.38).toFixed(3)})`);
+    h.addColorStop(0.45, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.12).toFixed(3)})`);
+    h.addColorStop(1,    `rgba(${n.rc},${n.gc},${n.bc},0)`);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, rad * 4.5, 0, Math.PI*2);
+    ctx.fillStyle = h;
+    ctx.fill();
+
+    // glass core
+    const c = ctx.createRadialGradient(
+      n.x - rad*0.3, n.y - rad*0.3, 0,
+      n.x, n.y, rad
+    );
+    c.addColorStop(0,   `rgba(255,255,255,${(glow*0.65).toFixed(3)})`);
+    c.addColorStop(0.4, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.88).toFixed(3)})`);
+    c.addColorStop(1,   `rgba(${Math.max(0,n.rc-40)},${Math.max(0,n.gc-40)},${Math.max(0,n.bc-40)},${(glow*0.65).toFixed(3)})`);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, rad, 0, Math.PI*2);
+    ctx.fillStyle = c;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize', resize);
+resize();
+frame();
+</script>
+</body>
+</html>
