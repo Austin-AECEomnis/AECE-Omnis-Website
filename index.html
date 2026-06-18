@@ -539,14 +539,14 @@
     <div class="about-text">
       <p class="section-label">About AECE Omnis</p>
       <h2 class="section-title">Where Artificial Intelligence Meets Intentional Design</h2>
-      <p class="section-body">AECE Omnis LLC is an AI research and consultation practice founded on a single premise: that intelligent systems must be designed with alignment, ethics, and purpose at their core, not retrofitted as an afterthought.</p>
-      <p class="section-body" style="margin-top:1rem;">Led by Austin Addington Berlin, AECE brings eleven years of enterprise-scale spatial data infrastructure experience at a Fortune 200 energy company together with nearly a decade of executive-level human systems consulting. The result is a practice that understands both the technical architecture of AI systems and the human dynamics that determine whether those systems serve their intended purpose.</p>
+      <p class="section-body">AECE Omnis LLC is an AI research and consultation practice founded on a single premise: that intelligent systems must be designed with safety and ethics, aligned at their core, not retrofitted as an afterthought.</p>
+      <p class="section-body" style="margin-top:1rem;">Led by Austin Addington Berlin, AECE brings eleven years of enterprise-scale GIS spatial data experience with a Fortune 200 energy company together with nearly a decade of executive-level human systems consulting. The result is a practice that understands both the technical architecture of AI systems and the human dynamics that determine whether those systems serve their intended purpose.</p>
       <div class="about-meta">
         <div class="about-meta-item"><strong>Entity:</strong> AECE Omnis LLC &nbsp;&bull;&nbsp; Delaware Limited Liability Company</div>
         <div class="about-meta-item"><strong>Location:</strong> Boerne, Texas</div>
         <div class="about-meta-item"><strong>Research:</strong> U.S. Provisional Patent No. 63/909,258 &mdash; AECE Alignment Framework</div>
         <div class="about-meta-item"><strong>Trademark:</strong> AECE&trade; &mdash; Approved for Publication, USPTO Class 042</div>
-        <div class="about-meta-item"><strong>Contact:</strong> <a href="mailto:owner@aeceomnis.com" style="color:var(--ice);text-decoration:none;">owner@aeceomnis.com</a></div>
+        <div class="about-meta-item"><strong>Contact:</strong> Use the inquiry form below</div>
       </div>
     </div>
   </div>
@@ -762,7 +762,7 @@
         <button type="submit" class="btn-primary">Send Inquiry</button>
       </div>
       <p class="form-note">
-        Inquiries received at <a href="mailto:owner@aeceomnis.com">owner@aeceomnis.com</a> &nbsp;&bull;&nbsp; AECE Omnis LLC, Boerne, Texas
+        AECE Omnis LLC &nbsp;&bull;&nbsp; Boerne, Texas
       </p>
     </form>
   </div>
@@ -775,7 +775,7 @@
     <a href="https://github.com/Austin-AECEomnis" target="_blank">GitHub</a>
     <a href="https://aeceomnis.maps.arcgis.com/home/gallery.html" target="_blank">AGOL</a>
     <a href="https://linkedin.com/in/austinberlin" target="_blank">LinkedIn</a>
-    <a href="mailto:owner@aeceomnis.com">Contact</a>
+    <a href="#contact">Contact</a>
   </div>
   <div class="footer-copy">&copy; 2025&ndash;2026 AECE Omnis LLC. AECE&trade; mark approved for publication, USPTO Class 042.</div>
 </footer>
@@ -808,6 +808,14 @@ const ctx    = canvas.getContext('2d');
 let nodes = [], edges = [];
 const NODE_COUNT = 26;
 const MAX_D      = 240;
+const OPACITY    = 0.50;   // 50% global transparency for orbs
+
+// Three-color palette: amber, indigo, violet
+const PALETTE = [
+  { rc: 255, gc: 115, bc:  53 },  // amber
+  { rc:  75, gc:   0, bc: 130 },  // indigo
+  { rc: 148, gc:   0, bc: 211 },  // violet
+];
 
 function resize() {
   canvas.width  = hero.offsetWidth;
@@ -819,7 +827,7 @@ function buildNet() {
   const W = canvas.width, H = canvas.height;
   nodes = [];
   for (let i = 0; i < NODE_COUNT; i++) {
-    const warm = Math.random() > 0.44;
+    const col = PALETTE[Math.floor(Math.random() * PALETTE.length)];
     nodes.push({
       x: Math.random() * W,
       y: Math.random() * H,
@@ -828,9 +836,9 @@ function buildNet() {
       vy: (Math.random() - 0.5) * 0.15,
       phase: Math.random() * Math.PI * 2,
       speed: 0.007 + Math.random() * 0.011,
-      rc: warm ? 255 : 79,
-      gc: warm ? 115 : 195,
-      bc: warm ?  53 : 247,
+      rc: col.rc,
+      gc: col.gc,
+      bc: col.bc,
     });
   }
   edges = [];
@@ -891,8 +899,8 @@ function frame() {
 
     // halo
     const h = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, rad * 4.5);
-    h.addColorStop(0,    `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.38).toFixed(3)})`);
-    h.addColorStop(0.45, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.12).toFixed(3)})`);
+    h.addColorStop(0,    `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.38*OPACITY).toFixed(3)})`);
+    h.addColorStop(0.45, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.12*OPACITY).toFixed(3)})`);
     h.addColorStop(1,    `rgba(${n.rc},${n.gc},${n.bc},0)`);
     ctx.beginPath();
     ctx.arc(n.x, n.y, rad * 4.5, 0, Math.PI*2);
@@ -904,9 +912,9 @@ function frame() {
       n.x - rad*0.3, n.y - rad*0.3, 0,
       n.x, n.y, rad
     );
-    c.addColorStop(0,   `rgba(255,255,255,${(glow*0.65).toFixed(3)})`);
-    c.addColorStop(0.4, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.88).toFixed(3)})`);
-    c.addColorStop(1,   `rgba(${Math.max(0,n.rc-40)},${Math.max(0,n.gc-40)},${Math.max(0,n.bc-40)},${(glow*0.65).toFixed(3)})`);
+    c.addColorStop(0,   `rgba(255,255,255,${(glow*0.65*OPACITY).toFixed(3)})`);
+    c.addColorStop(0.4, `rgba(${n.rc},${n.gc},${n.bc},${(glow*0.88*OPACITY).toFixed(3)})`);
+    c.addColorStop(1,   `rgba(${Math.max(0,n.rc-40)},${Math.max(0,n.gc-40)},${Math.max(0,n.bc-40)},${(glow*0.65*OPACITY).toFixed(3)})`);
     ctx.beginPath();
     ctx.arc(n.x, n.y, rad, 0, Math.PI*2);
     ctx.fillStyle = c;
